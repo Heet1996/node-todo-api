@@ -15,7 +15,7 @@ app.post('/todos',(req,res)=>{
 
    todo.save().then((doc)=>{
      res.status(200).send(doc);}
-     ,(err)=>{console.log("unable to save"+err);
+     ,(err)=>{res.status(400).send(err);
    });
 });
 //creating Model
@@ -37,6 +37,7 @@ app.post('/todos',(req,res)=>{
 // todo.save().then((doc)=>{console.log("save todo",doc);},(err)=>{console.log("unable to save"+err);});
 
 // newUser.save().then((doc)=>{console.log(doc);},(err)=>{console.log(err);});
-app.listen(3000,()=>{
+app.listen(4040,()=>{
   console.log("Server is active");
 });
+module.exports={app};
