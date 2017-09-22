@@ -18,6 +18,11 @@ app.post('/todos',(req,res)=>{
      ,(err)=>{res.status(400).send(err);
    });
 });
+app.get('/todos',(req,res)=>{
+  Todo.find().then((doc)=>{
+    res.send({doc});
+  });
+});
 //creating Model
 // var Todo=mongoose.model("Todo",{
 //   text:{
