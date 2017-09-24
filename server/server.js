@@ -4,7 +4,7 @@ var {user}=require('./model/user');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const {ObjectID} = require('mongodb');
 var app=express();
 app.use(bodyParser.json());
 app.post('/todos',(req,res)=>{
@@ -23,6 +23,19 @@ app.get('/todos',(req,res)=>{
     res.send({doc});
   });
 });
+app.get('/todo/:id',(req,res)=>
+{
+  var id=req.params.id;
+
+  if(!(ObjectID.isValid(id)))
+  return res.status(404).send();
+  Todo.findById(id).then((todo)=>{
+          if(todo.text)
+          return res.send(todo.text);
+          return res.status(404).send();
+  },(err)=>{ res.status(400).send()});
+}
+);
 //creating Model
 // var Todo=mongoose.model("Todo",{
 //   text:{
@@ -42,7 +55,7 @@ app.get('/todos',(req,res)=>{
 // todo.save().then((doc)=>{console.log("save todo",doc);},(err)=>{console.log("unable to save"+err);});
 
 // newUser.save().then((doc)=>{console.log(doc);},(err)=>{console.log(err);});
-app.listen(4040,()=>{
+app.listen(3000,()=>{
   console.log("Server is active");
 });
 module.exports={app};

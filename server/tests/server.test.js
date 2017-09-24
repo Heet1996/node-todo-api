@@ -63,7 +63,8 @@ describe("To get all todos",()=>{
     .get("/todos")
     .expect(200)
     .expect((res)=>{
-    expect(res.body.doc.length).toBe(2);    }).end(done);
+    expect(res.body.doc.length).toBe(2);    
+  }).end(done);
 
   });
 });
