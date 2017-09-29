@@ -1,6 +1,7 @@
 var {mongoose} = require('./db/mongoose');
 var {Todo}=require('./model/todo');
 var {user}=require('./model/user');
+var port=process.env.PORT || 3000
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -55,7 +56,7 @@ app.get('/todos/:id',(req,res)=>
 // todo.save().then((doc)=>{console.log("save todo",doc);},(err)=>{console.log("unable to save"+err);});
 
 // newUser.save().then((doc)=>{console.log(doc);},(err)=>{console.log(err);});
-app.listen(3000,()=>{
-  console.log("Server is active");
+app.listen(port,()=>{
+  console.log("Server is active",port);
 });
 module.exports={app};
