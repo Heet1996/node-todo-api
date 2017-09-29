@@ -98,3 +98,31 @@ it("should return 404 for invalid ID",(done)=>{
   .end(done)
 });
 });
+describe("todo delete",()=>{
+  it("should delete todo",(done)=>{
+    request(app)
+    .delete(`/todos/${dummy[1]._id.toHexString()}`)
+    .expect(200)
+    .expect((res)=>{
+      expect(res.body.todo._id).toBe(dummy[1]._id.toHexString());
+
+      })
+    .end(done)
+  });
+  it("should return 404 on todo not found",(done)=>{
+    var hexId=new ObjectID()
+    hexId=hexId.toHexString();
+    request(app)
+    .delete(`/todos/${hexId}`)
+    .expect(404)
+    .end(done)
+  }
+);
+it("should return 404 for invalid ID",(done)=>{
+  var id=123;
+  request(app)
+  .get(`/todos/${id}`)
+  .expect(404)
+  .end(done)
+});
+});
