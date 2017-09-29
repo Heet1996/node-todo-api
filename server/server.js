@@ -23,16 +23,16 @@ app.get('/todos',(req,res)=>{
     res.send({doc});
   });
 });
-app.get('/todo/:id',(req,res)=>
+app.get('/todos/:id',(req,res)=>
 {
   var id=req.params.id;
 
   if(!(ObjectID.isValid(id)))
   return res.status(404).send();
   Todo.findById(id).then((todo)=>{
-          if(todo.text)
-          return res.send(todo.text);
-          return res.status(404).send();
+          if(todo)
+          return res.send({todo});
+          res.status(404).send();
   },(err)=>{ res.status(400).send()});
 }
 );
