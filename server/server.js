@@ -1,9 +1,19 @@
+// var env=process.env.NODE_ENV || 'development';
+// console.log('env *********',env);
+// if(env==='development')
+// {process.env.PORT=3000;
+//
+//
+// }
+// else if(env==='test')
+// {
+//   process.env.PORT=3000;
+// }
 var {mongoose} = require('./db/mongoose');
 var {Todo}=require('./model/todo');
-var {user}=require('./model/user');
+var {User}=require('./model/user');
 var _=require('lodash');
-var port=process.env.PORT || 3000
-
+var port=process.env.PORT || 3000;
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -73,6 +83,16 @@ app.patch('/todos/:id',(req,res)=>{
 
                 })
   .catch((err)=>{res.status(400).send()})
+
+});
+//User
+app.post('/users',(req,res)=>{
+  var body=_.pick(req.body,['email','password']);
+  var user=new User(body);
+   user.save()
+  .then(()=>{return user.generateAuthToken();})
+  .then((token)=>{res.header('x-auth',token).send(user);})
+  .catch((err)=>{res.status(400).send(err)});
 
 });
 //creating Model
