@@ -12,6 +12,7 @@
 var {mongoose} = require('./db/mongoose');
 var {Todo}=require('./model/todo');
 var {User}=require('./model/user');
+var {authenticate}=require('./middleware/authenticates');
 var _=require('lodash');
 var port=process.env.PORT || 3000;
 const express = require('express');
@@ -32,7 +33,7 @@ app.post('/todos',(req,res)=>{
 });
 app.get('/todos',(req,res)=>{
   Todo.find().then((doc)=>{
-    res.send({doc});
+    res.status(200).send({doc});
   });
 });
 app.get('/todos/:id',(req,res)=>
@@ -84,6 +85,25 @@ app.patch('/todos/:id',(req,res)=>{
                 })
   .catch((err)=>{res.status(400).send()})
 
+});
+//authentication
+var authenticate=(req,res,next)=>{
+  var token=req.header('x-auth');
+
+  User.findByToken(token).then((user)=>{
+    if(!user)
+    {
+      return Promise.reject("User not found");
+    }
+    req.user=user;
+    req.token=token;
+    next();
+  }).catch((err)=>{res.status(401).send(err)});
+};
+
+app.get('/user/me',authenticate,(req,res)=>{
+
+res.status(200).send(req.user);
 });
 //User
 app.post('/users',(req,res)=>{
