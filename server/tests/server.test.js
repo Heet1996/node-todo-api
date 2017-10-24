@@ -1,23 +1,13 @@
 const request = require('supertest');
 const expect = require('expect');
 const {ObjectID} = require('mongodb');
-
+const {dummy,populateData,dummyUser,populateUser} = require('./seed/seed');
+const {User} = require('./../model/user');
 const {app} = require('./../server');
 const {Todo} = require('./../model/todo');
-var dummy=[
-  { _id:new ObjectID(),
-    text:"My first todo"
-  },
-  { _id:new ObjectID(),
-    text:"My second todo"
-  }
-]
-beforeEach((done)=>{
-  Todo.remove({}).then(()=>{
-    return Todo.insertMany(dummy);
-  }).then(()=>done());
 
-});
+beforeEach(populateData);
+beforeEach(populateUser);
 describe("Post/Todos",()=>{
 
   it("should create new todo",(done)=>{
@@ -126,3 +116,78 @@ it("should return 404 for invalid ID",(done)=>{
   .end(done)
 });
 });
+describe("Get valid Users",()=>{
+  it("should return authenticate user",(done)=>{
+    request(app)
+    .get("/user/me")
+    .set("x-auth",dummyUser[0].tokens[0].token)
+    .expect(200)
+    .expect((res)=>{
+      expect(res.body.email).toBe(dummyUser[0].email);
+      expect(res.body._id).toBe(dummyUser[0]._id.toHexString());
+    })
+    .end(done)
+  });
+  it("should not return authenticate",(done)=>{
+    request(app)
+    .get("/user/me")
+
+    .expect(401)
+    .expect((res)=>{
+      expect(res.body).toEqual({});
+    })
+    .end(done)
+  });
+});
+describe("POSt /users",()=>{
+  it("should generate token for user",(done)=>{
+    var email="example@gmail.com";
+    var password="12345675";
+    request(app)
+    .post("/users")
+    .send({email,password})
+    .expect(200)
+    .expect((res)=>{
+      expect(res.body.email).toBe(email);
+
+    }).end((err)=>{
+      if(err)
+      {
+        return done(err);
+      }
+      User.findOne({email}).then((user)=>{
+
+        expect(password).toNotBe(pass);
+
+
+      });
+      done();
+    });
+  })
+  it("should return validation if request is invaid",(done)=>{
+    var email="example.com";
+    var password="12345675";
+      request(app)
+      .post("/users")
+      .send({email,password})
+      .expect(400)
+      .end(done)
+  });
+  it("should return error for duplicate email",(done)=>{
+    var email="heet1@live.com";
+    var password="12345675";
+      request(app)
+      .post("/users")
+      .send({email,password})
+      .expect(400)
+      .end(done)
+  });
+});
+// describe("Login for users",()=>{
+//   it("should return authenticate user",(done)=>{
+//
+//   });
+//   it("should not return invalid user data",(done)=>{
+//
+//   });
+// });
