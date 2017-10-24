@@ -21,7 +21,7 @@ var dummyUser=[
     password:"123456!",
     tokens:[
       {
-        token:jwt.sign({_id:user1,access:"auth"},"abc123").toString(),
+        token:jwt.sign({_id:user1,access:"auth"},process.env.JWT_token).toString(),
         access:"auth"
       }
     ]

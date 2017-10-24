@@ -14,6 +14,7 @@ var {Todo}=require('./model/todo');
 var {User}=require('./model/user');
 var {authenticate}=require('./middleware/authenticates');
 var _=require('lodash');
+var config=require('./config/config')
 const bcrypt = require('bcryptjs');
 var port=process.env.PORT || 3000;
 const express = require('express');
