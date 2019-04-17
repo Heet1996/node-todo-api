@@ -9,13 +9,11 @@
 // {
 //   process.env.PORT=3000;
 // }
-var {mongoose} = require('./db/mongoose');
+
 var {Todo}=require('./model/todo');
 var {User}=require('./model/user');
 var {authenticate}=require('./middleware/authenticates');
 var _=require('lodash');
-var config=require('./config/config')
-const bcrypt = require('bcryptjs');
 var port=process.env.PORT || 3000;
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -30,6 +28,7 @@ app.post('/todos',authenticate,(req,res)=>{
    });
 
    todo.save().then((doc)=>{
+     console.log(doc);
      res.status(200).send(doc);}
      ,(err)=>{res.status(400).send(err);
    });
@@ -115,7 +114,7 @@ app.post('/users',(req,res)=>{
    user.save()
   .then(()=>{return user.generateAuthToken();})
   .then((token)=>{res.header('x-auth',token).send(user);})
-  .catch((err)=>{res.status(400).send(err)});
+  .catch((err)=>{console.log(err);res.status(400).send(err)});
 
 });
 app.post('/login',(req,res)=>{

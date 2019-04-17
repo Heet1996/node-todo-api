@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+const {mongoose} = require('../db/mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 var Schema = mongoose.Schema;
-
+var config=require('../config/config');
 var UserSchema=new Schema({
   email:{
     type:String,
@@ -36,6 +36,8 @@ var UserSchema=new Schema({
     }
   }
   ]
+},{
+  usePushEach : true
 });
 //instance method
 UserSchema.methods.toJSON = function(){
@@ -48,8 +50,10 @@ UserSchema.methods.generateAuthToken = function (){
 
   var user=this;
   var access='auth';
-  var token=jwt.sign({_id:user._id.toHexString(),access},process.env.JWT_token).toString();
+  var token=jwt.sign('heet12',config.secret).toString();
+  
   user.tokens.push({token,access});
+  
   return user.save().then(()=>{return token; });
 };
 UserSchema.statics.findByToken=function(token){
@@ -57,7 +61,7 @@ UserSchema.statics.findByToken=function(token){
   var decode;
 
   try{
-    decode=jwt.verify(token,process.env.JWT_token);
+    decode=jwt.verify(token,config.secret);
 
   }
   catch(e)
